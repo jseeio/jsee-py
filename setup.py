@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='jsee',
-    version='0.0.2',
+    version='0.0.3',
     packages=['jsee'],
     scripts=['bin/jsee'],
     license='MIT',

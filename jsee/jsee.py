@@ -7,7 +7,7 @@ from flask import Flask, render_template, jsonify, request
 from waitress import serve as wserve
 
 def generate_schema (target, host='0.0.0.0', port=5050):
-    hints = typing.get_type_hints(target, include_extras=False)
+    hints = typing.get_type_hints(target)
     target_args = target.__code__.co_varnames
     inputs = []
     for a in target_args:
@@ -30,6 +30,7 @@ def generate_schema (target, host='0.0.0.0', port=5050):
         inputs.append(input_object)
     schema = {
       'model': {
+        'name': target.__name__,
         'type': 'post',
         'url': f'http://{ host }:{ port }/run',
         'worker': False,
@@ -40,7 +41,7 @@ def generate_schema (target, host='0.0.0.0', port=5050):
     return schema
 
 
-def serve(target, host='0.0.0.0', port=5050):
+def serve(target, host='0.0.0.0', port=5050, version='0.2'):
     schema = target if type(target) == dict else generate_schema(target, host, port)
 
     logger = logging.getLogger('waitress')
@@ -50,7 +51,12 @@ def serve(target, host='0.0.0.0', port=5050):
 
     @app.route('/')
     def render():
-        res = render_template('index.html', schema=schema, name=schema['model']['name'])
+        res = render_template(
+            'index.html',
+            schema=schema,
+            name=schema['model']['name'],
+            version=version
+        )
         return res
 
     @app.route('/run', methods=['POST'])

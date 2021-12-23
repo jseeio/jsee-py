@@ -12,6 +12,7 @@ parser.add_argument('module_name')
 parser.add_argument('target_name')
 parser.add_argument('--host', dest='host', default='0.0.0.0')
 parser.add_argument('--port', dest='port', default=5050)
+parser.add_argument('--version', dest='version', default='0.2')
 
 args = parser.parse_args()
 
@@ -20,4 +21,4 @@ sys.path.insert(1, os.getcwd())
 module = importlib.import_module(args.module_name.split('.')[0])
 target = getattr(module, args.target_name)
 
-jsee.serve(target, args.host, args.port)
+jsee.serve(target, args.host, args.port, args.version)
